@@ -13,6 +13,8 @@ Also
 
 * revisit use in MusicJot
 * Adapt to Borkle?
+* Life with diffable?
+* paginated infinite data sources?
 
 ----------
 
@@ -124,4 +126,34 @@ and the actual pile of data.
 Guessing we don't get the really cool stuff - given two snapshots,
 do something with them.  is that all hidden inside of table/collection
 view.
+
+----------
+
+Also NSDiffableDataSourceSectionSnapshot - looks like IOS14
+
+"a representation fo the state of the data in a lyaout section
+at a specific point in time"
+
+NSDiffableDataSourceSectionSnapshot<ItemIdentifier>
+where it's hashable
+
+* represents the data for a single section in a collection view
+or table view
+
+* can use with or instead of a diffable data source snapshot
+  - use when you need precise management of the data in a section 
+    of your layout - like when sections acture the data from different
+    sources.
+  - also to representat data with a hierarchical structure
+    - outline / expandable items
+
+apply snaptshot to section animating differences.
+  (the header has ascii art)
+
+[ ] loop back to this one
+
+----------
+
+So, let's play with tableviews
+
 
