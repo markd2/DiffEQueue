@@ -156,4 +156,10 @@ apply snaptshot to section animating differences.
 
 So, let's play with tableviews
 
+ideas
+
+* insert something
+* add a section
+* remove a section
+
 
