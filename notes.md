@@ -158,8 +158,7 @@ So, let's play with tableviews
 
 ideas
 
-* insert something
-* add a section
-* remove a section
-
+* [X] insert something
+* [X] sections with header
+* [ ] type to filter
 
