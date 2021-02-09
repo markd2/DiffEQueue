@@ -8,6 +8,7 @@ Some links to read
 * WWDC 19 session [Advances in UIDataSources](https://developer.apple.com/videos/play/wwdc2019/220/)
 * [combine + diffable data sources (thoughtbot)](https://thoughtbot.com/blog/combine-diffable-data-source)
 * [A first look (sundell)](https://wwdcbysundell.com/2019/diffable-data-sources-first-look/)
+* WWDC 20 session [Advances in Diffable Data Sources](https://developer.apple.com/videos/play/wwdc2020/10045/)
 
 Also
 
@@ -15,6 +16,7 @@ Also
 * Adapt to Borkle?
 * Life with diffable?
 * paginated infinite data sources?
+* CollectionDifference from stdlib
 
 ----------
 
@@ -161,4 +163,349 @@ ideas
 * [X] insert something
 * [X] sections with header
 * [ ] type to filter
+
+==================================================
+Notes from WWDC sessions.
+
+WWDC 2019 - advances in uidatasources
+
+* current state of the art
+* approach
+* demos
+* considerations
+
+
+* interacting with table/collection views
+  - number of sections / items in section / cell for item at
+  - pretty straight forward
+  - served us well - simple and flexible
+  - flexible b/c don't need any particular data structure behind it
+
+* apps mroe complicated
+  - ui data sources backed by complex controllers.  Can do a lot
+    of stuff
+  - core data / web services
+  - visualize with a controller / UI layer conversation
+    1. UI->Controller number of items?
+    2. web service request gets a response.  Got data for tweets!
+    3. Controller -> UI didChange, something changed
+    4. where things get more complex
+    5. up to the UI layer. need to change this into updates for our
+       layer.
+    6. UI Layer: figure out all the mutations. 
+       (covered last year in a Tour
+       of collection view, and how to construct those batch updates)
+       https://developer.apple.com/videos/play/wwdc2018/225/)
+    7. sometimes how hard you try, (error message
+![NSInternalInconsistencyException](assets/big-error.png)
+    8. :-D  "you've probably hit this before".
+    9. eventually get frustrated and just call reload data. that's
+       fine.  You get this non-animated effect and detracts from
+       UX.
+   10. Philosophy - whats' the problem?  Where is our Truth™
+       The data controller has its version. and the UI has a version
+       of truth, and UI layer has responsibility of mitigating that
+   11. Error prone approach b/c no centralized trooth
+
+* A new Approach, Diffable Data Source
+  1. A declarative to UI state
+  2. no performBatchUpdates (crashes, hassles, complexity),
+  3. repalced with apply
+  4. Via a snapshot - truth of the _current_ UI state.
+  5. collection of unique IDs for sections for items, rather than
+     index paths
+  6. Foo / Bar / Bif current stanpshop. new truth is Bar Foo Baz
+  7. how do we get there?
+  8. some changed order, a new item coming in, and one going out
+  9. apply know about the current and new state
+
+* Four classes
+  - UI/NSCollectionView DiffableDataSource
+  - UITableVieWDiffableDataSource
+  - NSDiffableDataSourceSnapshot (common across platforms)
+  - (No NSTableView version)
+
+* Examples (@8:01)
+  - look at the example.  (assuming it's the [Modern Collection Views]
+    (https://developer.apple.com/documentation/uikit/views_and_controls/collection_views/implementing_modern_collection_views) one)
+  - notice that in addition to the three examples here, the same
+    project has illustrations of the compositional layout API.  they      just happen to use DDS as a quick way to populate data.
+  - repeating pattern - three step process
+    1. create snapshot
+    2. update snapshot
+    3. apply it
+  - search bar text did change, "perform Query" with search text
+  - perform query is call out to model layer object, for a filtered
+    sorted list that matches.
+  - create a new diffable data soruce snapshot (empty)
+  - populate it with sections and items.
+    - _using an enum for the section identifiers_
+  - pass array of identifiers.  But in Swift can use own native
+    types (including value types), if you make it hashable, can
+    pass it.
+  - then apply animating the differences
+  - no code at all about reasoning about what we're displaying
+  - notice it's a generic class in swift. paramaterized by section
+    and item identifier.
+  - can just declare an enum type, and they're automatically hashable
+  - for the mountain type (struct), it's also hashable
+  - give it an automatically generated unique identifier.
+    - hash has(id) with that identifier.
+    - "make them unique enough for DDS to track them"
+    - (also implements equality as well)
+  - configure data source - just a little bit of code.
+  - init the data source giving it the table/collection view
+  - trailing closure is our cell for item at index path, ask
+    it for the cell, populate it, and return it back.
+  - one thing that's nice in addition to index path, we're given
+    its identifier, or in this case the native swift value type.
+  - no more work to go look it up.
+
+* mockup of wifi setup - two sections.  "config section" with
+  enable/disable switch and current network, and below a dynamically
+  updating section of potential networks.
+  - get collapse and fill animation when turn it on and off
+  - update UI - called any time display changes
+  - after getting the data, get the config items
+  - create a snapshot, initially empty, so populate it
+  - append first section, append the items (one or two items)
+  - if enabled, ask model layer for the current list of available
+    networks, and wrap in some item types. append section, append 
+    items
+  - then apply
+  - might not want to animate the first time.  might want to be
+    instantaneous
+  - section type and item type.  Section is still an enum
+  - item type is a struct is a hashable.  When look at the list,
+    network items, it also has the odd ball at the top. IT's
+    hetergenous.  The wrapper type have to take care it
+    conforms and things unqiuely identified
+  - for network items, use the identifier. And for config, generate
+    a UUID
+  - for the hash function, hasher.combine the unique identifier (UUID)
+  - look at config - (tableview)  From the perspective of creating
+    and applying snapshots, it's the same
+  - traling item provider closure - looks complex.  b/c of heterogenous
+    items (three types)
+
+* last example
+  - collection view of color swatches Then it sorts.
+  - this one is different
+  - if goal was to just sort and jump.
+  - sort implementation that gives the state each time,
+  - how different?
+  - in performSort function
+  - there step, get snapshot, populate, apply
+  - we ask for its current snapshot. Prepopulated with the current
+    truth.  Don't have to start over. Can start and compute next
+    intermediate state
+  - append items. also have delete items.  There's a lot of calls,
+    can move items, and so on.
+  - finally apply snapshot
+
+* seen how easy it is / how little code, to create these dynamic
+  UIs that are robust to changes.
+
+* Considerations
+  - go through some more detailed consideration to get the best out
+    of the API
+  - just three steps.  Always call apply(). don't call the old stuff.
+  - two ways to make snapshot
+    - empty
+    - current data source snapshot _copy_
+  - once the state, you can ask it.
+  - never see index path, explicit API
+  - append API for sections that don't have existing items
+  - nil section appends to the last known section
+
+* identifeirs
+  - have to be unique. many things have unique identifier
+  - conform to hashable - a lot of things do this automatically
+  - also saw can bring in model data into these identifier. 
+    bring in other attributes.  When confiugure your cell, everything
+    is there in-line
+  - quick template
+
+```
+struct TheModel: Hashable {
+    let identifeir = UUID()
+    func hash(into: hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
+    static func == (lhs: TheModel, rhs: TheModel) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+}
+```
+
+  - What index-pth APIs? Like all the stuff in the delegate.  This
+    is constant time, so super-fast
+```
+func collectionView(_ collectionView: UICollectionView,
+                    didSelectItemAt indexPath: IndexPath) {
+    if let identifier = dataSource.itemIdentifier(for: indexPath) {
+        // splunge
+    }
+}
+```
+
+* Performance
+  - worked hard to make it as fast as possible
+  - O(N) operation.  The more items, the longer it takes
+  - measure your apps, make sure the main queue is as free as possible
+  - if find there is a large nubmer of items, it is safe to call
+    apply from the background.
+  - "no API is the best API:
+  - the framework says "keep doing the diff right here, it jumps          to main queue, and applies
+  - one caveat - if choose this model, be consistent, always call
+    it from the same queue, and we'll complete
+
+* Demo - Share Sheet @32:15
+  - what are folks struggling with?  the iOS 13 share sheet,
+  - takes advantage of compositional layout and diffable data source.
+  - airdrop extension - browser that's browsing for devices. Already
+    using UUIDs.
+  - (that was a minute)
+  - (all the drop locations moving around, wonder how often bad taps
+    happen as something animates away)
+
+----------
+
+Interesting take-aways
+  - enums hashable
+  - can use complete swift types as the identifiers (not just
+    pass UUIDs around)
+  - they didn't talk about hash collisions, but interesting that
+    their template includes operator ==
+
+----------
+
+Advances in diffable data sources - WWDC 2020
+
+* https://developer.apple.com/videos/play/wwdc2020/10045/
+  - iOS 14
+  - emoji explorer example
+  - first section, horizontally scrolling grid
+  - middle section is an expandable/collapsable outline
+    - new in iOS 14
+  - tableview portion
+
+* recap
+  - simplifies UI state
+  - automatic animations
+  - no more batch updates
+
+* iOS 14
+  - section snapshots
+  - first class reorering
+
+* section snapshots
+  - for a single section's data
+  - two reasons:
+    1. allow data sources to be more composable into
+       section size chunks
+    2. modeling of hierarchical data for outline style
+       UI
+  - in emojiexploder
+  - using a single section snapshot for the first one
+  - the second one (outline) a second one models this
+    hearrchy
+  - in list section with a third sectino snapshot
+  - compose from three distinct snapshots, each with a
+    single section's contents
+
+* API
+  - has expand/collapse, rootItems, level(of item)
+  - snapshot vs section snapshot
+  - generic over item type, hashable.  no section
+    identifier type.  they don't know what section they
+    represent
+  - append has optional parent, allows to create parent
+    child relationships
+  - two new UICollectionViewDiffableDatasource
+    - apply that takes the section and section identifier
+    - retreivie a section snapshot from a section's contents
+
+* using together (@4:52)
+```
+func update(animatued: Bool = true) {
+    // add sections in specific order
+    let sections: [Section] = [.recent, .top, .suggested]
+    var snapshot = NSDiffData<Section, Item>()
+    snaphot.appendSections(sections)
+    datasource.apply(snapshot, animatingDifferences: animutated)
+
+    // populate each item
+    for section in sections {
+        let sectionItems = items(for:section)
+        var sectionSnapshot = SDiffDataSectionSnap<Item>()
+        sectionSnapshot.append(sectionItems)
+        dataSource.apply(sectionSnapshot, to: section, animating)
+    }
+}
+```
+
+* hierarchical data.
+```
+var sectionSnapshot = ...
+//                                           vvvv
+sectionSanpsot.append(["smileys", "Nature", "Food", ...])
+sectionSnapshot.append(["", "", ""], to: "Food")
+```
+
+Getting all children related to a parent item, optionally
+including parent
+
+```
+let childShapshot = sectionSnapshot.snapshot(for: parent, includingParent: false)
+```
+
+* expansion state.  managed as part of section
+  snapshot state.  Can easily detemrine if it it
+  is initially visible by setting its parent section
+  state. can also query. If mutate it, it won't
+  apply until you `apply`
+* When user interacts with the UI, the framework will
+  updte the section snapshot with that state.
+* notified by expansion state.  e.g. have adesign that
+  a parent never collapse.  Support for programatic
+  control over expansion caused by user interaction
+* SectionSnapshotHandlers<Item> struct, with
+  should/will|Expand/collapse item, and
+  snapshotForExpandingParent (for lazy loading)
+  - minimize the amount of data loaded if it's expensive,
+    can load if needed
+
+- So instead of a delegate, it's a struct of function pointers. 
+  in objc it's an object with a bunch of blocks
+  `dataSource.sectionSnapshotHandlers.willExpandItem = ...`
+
+
+* reordering supporting
+  - one of the advances is model with unique item identifirs,
+    possible for the framework to commit reordering changes based
+    on app's behalf. 
+  - not enough, the app needs to be notified so can persist the
+    visual order to the UI
+  - ReorderingHandlers
+    - canReorderItem - when user attempts to start
+    - willReorder
+    - didReorder - when done to commit the new state (takes a
+       NSDiffDSTransaction<Section,Item>)
+  - transactions
+    - DiffDSTransaction / DiffDSSectionTransction
+    - initialSnapshot / final Snapshot / difference
+      - CollectionDifference<Item>
+      - swift standard lib
+      - maybe can apply this directly to the collection
+    - the DiffDSTransaction includes an array of sectionTransactions
+
+* example.  Backing store is array of items
+```
+    dataSouce.reorderingHandlers.didReorder = { [weak self] transaction in
+    guard let self = self else { return }
+    if let updatedBackingStore = self.backingStore.applying(transaction.difference) {
+        self.backingStore = updatedBackingStore
+    }
+```
 
