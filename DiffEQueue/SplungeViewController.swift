@@ -1,6 +1,6 @@
 import UIKit
 
-class ViewController: UIViewController {
+class SplungeViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
 
     var dataSource: UITableViewDiffableDataSource<Int, UUID>!
@@ -94,7 +94,7 @@ class ViewController: UIViewController {
 
 
 
-extension ViewController: UITableViewDelegate {
+extension SplungeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerFooterView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "Snurgle")!
 
