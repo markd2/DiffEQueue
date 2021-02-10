@@ -67,7 +67,7 @@ class ViewController: UIViewController {
             snapshot.appendItems(Array(values.keys), toSection: sectionNumber)
         }
 
-        dataSource.apply(snapshot, animatingDifferences: true) {
+        dataSource.apply(snapshot, animatingDifferences: false) {
             print("completion")
         }
     }
