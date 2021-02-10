@@ -3,6 +3,10 @@ import UIKit
 // goal - use this stuff after seeing the WWDC sessions, along
 // with using a swift type as the key
 
+enum Section {
+    case blah
+}
+
 struct Participant: Hashable {
     let id = UUID()
     var name: String
@@ -28,8 +32,10 @@ struct Participant: Hashable {
 
 
 class InitiaitveTrackerViewController: UIViewController {
+    @IBOutlet var tableView: UITableView!
+
     var participants = [Participant]()
-    var topOfOrder: Participant?  // current player
+    var topIndex = 0
 
     func makeParticipants() {
         let pcCount = 4
@@ -50,23 +56,48 @@ class InitiaitveTrackerViewController: UIViewController {
 
     // participants ordered by current initiative
     func turnOrder() -> [Participant] {
-        return participants
+        let ordered = participants.sorted { $0.initiative! < $1.initiative! }
+
+        // rotate array
+        let slice1 = ordered[..<topIndex]
+        let slice2 = ordered[topIndex...]
+        let rotated = Array(slice2) + Array(slice1)
+        return rotated
     }
+
+    var dataSource: UITableViewDiffableDataSource<Section, Participant>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Bork")
 
         makeParticipants()
 
         let currentOrder = turnOrder()
 
-        
-        
+        dataSource = UITableViewDiffableDataSource<Section, Participant>(tableView: tableView) {
+            (tableView, indexPath, participant) in
+
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Bork", for: indexPath)
+            cell.textLabel!.text = "\(participant.initiative!) : \(participant.name)"
+            return cell
+        }            
+
+        var snapshot = dataSource.snapshot()
+        snapshot.appendSections([.blah])
+
+        snapshot.appendItems(currentOrder, toSection: .blah)
+        dataSource.apply(snapshot)
     }
 
-    func nextParticipant() {
-        // move to next dealie
-        // regen list with that that player first
-        // apply
+    @IBAction func nextParticipant() {
+        topIndex = ((topIndex + 1) % (participants.count - 1))
+        let currentOrder = turnOrder()
+
+        var snapshot = dataSource.snapshot()
+        snapshot.appendItems(currentOrder, toSection: .blah)
+        dataSource.apply(snapshot)
+        // try inserting and deleting and see if animation is better
     }
 }
