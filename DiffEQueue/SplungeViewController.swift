@@ -1,5 +1,7 @@
 import UIKit
 
+// goal - use this stuff just reading the headers and docs
+
 class SplungeViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
 
