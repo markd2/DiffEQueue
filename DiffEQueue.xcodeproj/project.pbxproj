@@ -13,6 +13,7 @@
 		7D40941F25C8BDDF00CF9AA3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D40941D25C8BDDF00CF9AA3 /* Main.storyboard */; };
 		7D40942125C8BDE100CF9AA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D40942025C8BDE100CF9AA3 /* Assets.xcassets */; };
 		7D40942425C8BDE100CF9AA3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D40942225C8BDE100CF9AA3 /* LaunchScreen.storyboard */; };
+		7D64F18225D431CF00772348 /* InitiaitveTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D64F18125D431CF00772348 /* InitiaitveTrackerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		7D40942025C8BDE100CF9AA3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D40942325C8BDE100CF9AA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D40942525C8BDE100CF9AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D64F18125D431CF00772348 /* InitiaitveTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitiaitveTrackerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,13 +58,14 @@
 		7D40941625C8BDDF00CF9AA3 /* DiffEQueue */ = {
 			isa = PBXGroup;
 			children = (
+				7D40941D25C8BDDF00CF9AA3 /* Main.storyboard */,
 				7D40941725C8BDDF00CF9AA3 /* AppDelegate.swift */,
 				7D40941925C8BDDF00CF9AA3 /* SceneDelegate.swift */,
 				7D40941B25C8BDDF00CF9AA3 /* SplungeViewController.swift */,
-				7D40941D25C8BDDF00CF9AA3 /* Main.storyboard */,
 				7D40942025C8BDE100CF9AA3 /* Assets.xcassets */,
 				7D40942225C8BDE100CF9AA3 /* LaunchScreen.storyboard */,
 				7D40942525C8BDE100CF9AA3 /* Info.plist */,
+				7D64F18125D431CF00772348 /* InitiaitveTrackerViewController.swift */,
 			);
 			path = DiffEQueue;
 			sourceTree = "<group>";
@@ -138,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D40941C25C8BDDF00CF9AA3 /* SplungeViewController.swift in Sources */,
+				7D64F18225D431CF00772348 /* InitiaitveTrackerViewController.swift in Sources */,
 				7D40941825C8BDDF00CF9AA3 /* AppDelegate.swift in Sources */,
 				7D40941A25C8BDDF00CF9AA3 /* SceneDelegate.swift in Sources */,
 			);

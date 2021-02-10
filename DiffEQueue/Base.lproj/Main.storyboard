@@ -19,6 +19,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="Icc-8t-Ycx"/>
+                        <segue destination="juH-0e-2q8" kind="relationship" relationship="viewControllers" id="nxw-D7-lnR"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rty-m7-ulI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -65,8 +66,34 @@
             </objects>
             <point key="canvasLocation" x="-546.39999999999998" y="-614.03940886699513"/>
         </scene>
+        <!--Initiative-->
+        <scene sceneID="fJg-4m-6hn">
+            <objects>
+                <viewController title="Initiative" id="juH-0e-2q8" customClass="InitiaitveTrackerViewController" customModule="DiffEQueue" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ruY-98-rJY">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="glorp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hh7-Mp-VeI">
+                                <rect key="frame" x="152" y="158" width="40" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="CeB-Eb-DY0"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" image="books.vertical" catalog="system" id="7Aw-lk-SBy"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qin-hK-FR4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-772" y="35"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="books.vertical" catalog="system" width="128" height="103"/>
         <image name="tortoise" catalog="system" width="128" height="68"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
