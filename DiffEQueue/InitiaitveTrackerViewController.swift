@@ -92,12 +92,16 @@ class InitiaitveTrackerViewController: UIViewController {
     }
 
     @IBAction func nextParticipant() {
-        topIndex = ((topIndex + 1) % (participants.count - 1))
+        topIndex = ((topIndex + 1) % (participants.count))
         let currentOrder = turnOrder()
 
         var snapshot = dataSource.snapshot()
+        
+        // Need to clear it all out first, otherwise animation gets messed up
+        snapshot.deleteAllItems()
+        snapshot.appendSections([.blah])        
         snapshot.appendItems(currentOrder, toSection: .blah)
+
         dataSource.apply(snapshot)
-        // try inserting and deleting and see if animation is better
     }
 }

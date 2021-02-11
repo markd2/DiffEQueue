@@ -79,8 +79,8 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pxP-ax-Mbf">
-                                <rect key="frame" x="20" y="699" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
+                                <rect key="frame" x="20" y="699" width="67" height="30"/>
+                                <state key="normal" title="Next Turn"/>
                                 <connections>
                                     <action selector="nextParticipant" destination="juH-0e-2q8" eventType="touchUpInside" id="GWa-Ft-ZpO"/>
                                 </connections>
