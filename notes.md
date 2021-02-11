@@ -329,7 +329,7 @@ WWDC 2019 - advances in uidatasources
 ```
 struct TheModel: Hashable {
     let identifeir = UUID()
-    func hash(into: hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(identifier)
     }
     static func == (lhs: TheModel, rhs: TheModel) -> Bool {
