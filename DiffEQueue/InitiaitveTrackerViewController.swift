@@ -7,18 +7,27 @@ enum Section {
     case blah
 }
 
+enum ParticipantType {
+    case player
+    case monster
+    case npc
+}
+
 struct Participant: Hashable {
     let id = UUID()
     var name: String
     var initiative: Int?
     var hp: Int = 32
     var ac: Int = -2 // plate mail
+    var type: ParticipantType
 
-    init(name: String, hp: Int, ac: Int, initiative: Int? = nil) {
+    init(name: String, hp: Int, ac: Int, type: ParticipantType,
+         initiative: Int? = nil) {
         self.name = name
         self.hp = hp
         self.ac = ac
         self.initiative = initiative
+        self.type = type
     }
 
     func hash(into hasher: inout Hasher) {
@@ -48,13 +57,13 @@ class InitiaitveTrackerViewController: UIViewController {
 
         let pcs = (0..<pcCount).map {
             Participant(name: "Player \($0)", hp: 2 * $0, ac: $0, 
-                               initiative: d20())
+                        type: .player, initiative: d20())
         }
         participants += pcs
 
         let monsters = (0..<monsterCount).map {
-            return Participant(name: "Monster \($0)", hp: 2 * $0, ac: $0, 
-                               initiative: d20())
+            return Participant(name: "Monster \($0)", hp: 2 * $0, ac: $0,
+                               type: .monster, initiative: d20())
         }
         participants += monsters
         print(participants)
@@ -71,7 +80,7 @@ class InitiaitveTrackerViewController: UIViewController {
         return rotated
     }
 
-    var dataSource: UITableViewDiffableDataSource<Section, Participant>!
+    var dataSource: DeletableTableViewDiffableDataSource!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,13 +91,14 @@ class InitiaitveTrackerViewController: UIViewController {
 
         let currentOrder = turnOrder()
 
-        dataSource = UITableViewDiffableDataSource<Section, Participant>(tableView: tableView) {
+        dataSource = DeletableTableViewDiffableDataSource(tableView: tableView) {
             (tableView, indexPath, participant) in
 
             let cell = tableView.dequeueReusableCell(withIdentifier: "Bork", for: indexPath)
             cell.textLabel!.text = "\(participant.initiative!) : \(participant.name)"
             return cell
-        }            
+        }
+        dataSource.itvc = self
 
         var snapshot = dataSource.snapshot()
         snapshot.appendSections([.blah])
@@ -118,10 +128,44 @@ class InitiaitveTrackerViewController: UIViewController {
     var npcNumber = 0
     @IBAction func newParticipant() {
         let npc = Participant(name: "NPC \(npcNumber)", hp: 20, ac: 4,
-                              initiative: d20())
+                              type: .npc, initiative: d20())
         npcNumber += 1
 
         participants.append(npc)
         updateSnapshot()
+    }
+
+    func removedParticipant(_ goAway: Participant) {
+        // assuming coming from the data source, so the UI is already
+        // up to date
+        participants.removeAll { value in
+            value == goAway
+        }
+    }
+}
+
+
+class DeletableTableViewDiffableDataSource: UITableViewDiffableDataSource<Section, Participant> {
+    weak var itvc: InitiaitveTrackerViewController!
+
+    override func tableView(_ tableView: UITableView,
+                            canEditRowAt indexPath: IndexPath) -> Bool {
+        let participant = itemIdentifier(for: indexPath)
+        return participant?.type != .player
+    }
+    
+    override func tableView(_ tableView: UITableView, 
+                            commit editingStyle: UITableViewCell.EditingStyle,
+                            forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            if let identifierToDelete = itemIdentifier(for: indexPath) {
+                var snapshot = self.snapshot()
+                snapshot.deleteItems([identifierToDelete])
+                apply(snapshot)
+
+                // Is there a better way?
+                itvc.removedParticipant(identifierToDelete)
+            }
+        }
     }
 }
