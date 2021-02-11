@@ -31,6 +31,10 @@ struct Participant: Hashable {
 }
 
 
+func d20(_ modifier: Int = 0) -> Int {
+    Int.random(in: (1...20)) + modifier 
+}
+
 class InitiaitveTrackerViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
 
@@ -43,12 +47,14 @@ class InitiaitveTrackerViewController: UIViewController {
         participants = []
 
         let pcs = (0..<pcCount).map {
-            Participant(name: "Player \($0)", hp: 2 * $0, ac: $0, initiative: $0 * 2)
+            Participant(name: "Player \($0)", hp: 2 * $0, ac: $0, 
+                               initiative: d20())
         }
         participants += pcs
 
         let monsters = (0..<monsterCount).map {
-            Participant(name: "Monster \($0)", hp: 2 * $0, ac: $0, initiative: $0 * 2 + 1)
+            return Participant(name: "Monster \($0)", hp: 2 * $0, ac: $0, 
+                               initiative: d20())
         }
         participants += monsters
         print(participants)
@@ -91,8 +97,7 @@ class InitiaitveTrackerViewController: UIViewController {
         dataSource.apply(snapshot)
     }
 
-    @IBAction func nextParticipant() {
-        topIndex = ((topIndex + 1) % (participants.count))
+    func updateSnapshot() {
         let currentOrder = turnOrder()
 
         var snapshot = dataSource.snapshot()
@@ -103,5 +108,20 @@ class InitiaitveTrackerViewController: UIViewController {
         snapshot.appendItems(currentOrder, toSection: .blah)
 
         dataSource.apply(snapshot)
+    }
+
+    @IBAction func nextParticipant() {
+        topIndex = ((topIndex + 1) % (participants.count))
+        updateSnapshot()
+    }
+
+    var npcNumber = 0
+    @IBAction func newParticipant() {
+        let npc = Participant(name: "NPC \(npcNumber)", hp: 20, ac: 4,
+                              initiative: d20())
+        npcNumber += 1
+
+        participants.append(npc)
+        updateSnapshot()
     }
 }

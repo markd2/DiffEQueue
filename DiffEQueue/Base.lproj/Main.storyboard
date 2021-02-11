@@ -85,14 +85,23 @@
                                     <action selector="nextParticipant" destination="juH-0e-2q8" eventType="touchUpInside" id="GWa-Ft-ZpO"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Op0-mM-MtU">
+                                <rect key="frame" x="133" y="699" width="109" height="30"/>
+                                <state key="normal" title="New Participant"/>
+                                <connections>
+                                    <action selector="newParticipant" destination="juH-0e-2q8" eventType="touchUpInside" id="c0J-Bc-RjM"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="CeB-Eb-DY0"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="CeB-Eb-DY0" firstAttribute="bottom" secondItem="pxP-ax-Mbf" secondAttribute="bottom" id="1pd-sR-AkR"/>
                             <constraint firstItem="K0C-nm-sq3" firstAttribute="top" secondItem="CeB-Eb-DY0" secondAttribute="top" id="4Z1-5z-DBe"/>
+                            <constraint firstItem="Op0-mM-MtU" firstAttribute="centerX" secondItem="ruY-98-rJY" secondAttribute="centerX" id="B4W-cv-YAl"/>
                             <constraint firstItem="pxP-ax-Mbf" firstAttribute="top" secondItem="K0C-nm-sq3" secondAttribute="bottom" id="EaY-5T-KRa"/>
                             <constraint firstItem="K0C-nm-sq3" firstAttribute="leading" secondItem="CeB-Eb-DY0" secondAttribute="leading" id="e09-PW-ci8"/>
+                            <constraint firstItem="Op0-mM-MtU" firstAttribute="centerY" secondItem="pxP-ax-Mbf" secondAttribute="centerY" id="lvs-HK-N5T"/>
                             <constraint firstItem="CeB-Eb-DY0" firstAttribute="trailing" secondItem="K0C-nm-sq3" secondAttribute="trailing" id="q5g-rz-wZk"/>
                             <constraint firstItem="pxP-ax-Mbf" firstAttribute="leading" secondItem="CeB-Eb-DY0" secondAttribute="leading" constant="20" id="wDS-0H-c9O"/>
                         </constraints>
