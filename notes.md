@@ -12,7 +12,7 @@ Some links to read
 
 Also
 
-* revisit use in MusicJot
+* [X] revisit use in MusicJot
 * Adapt to Borkle?
 * Life with diffable?
 * paginated infinite data sources?
@@ -509,3 +509,70 @@ let childShapshot = sectionSnapshot.snapshot(for: parent, includingParent: false
     }
 ```
 
+----------
+
+CollectionDifference
+  - "A collection of insertions and removals that describe the differenc
+    between two ordered collection states
+
+Ordered collection diffing
+- initial implementation - https://github.com/apple/swift/pull/21845
+- improvement - https://github.com/apple/swift/pull/25808
+- swiftEvo - https://github.com/apple/swift-evolution/pull/968
+- overview - https://www.hackingwithswift.com/articles/182/whats-new-in-swift-5-1
+- bit of analysis and downsides (includes diffDS mentions too) - https://www.allaboutswift.com/dev/2019/8/18/ios-13-beta-problems
+
+
+```
+struct CollectionDifference<ChangeElement>
+```
+
+Type aliases
+  - Element : sequence's elements
+  - Indicies : indices that are valid for subscripting the collection, in
+               ascending order
+  - Iterator : provides the collection's iteration interface and encapsulates
+               its iteration tate
+  - SubSequence : contiguous subrange of the elements
+
+* init? makes a new coll difference from a collection of changes
+* count - # of elements
+
+* Change enum
+  - insert(offset: Int, element: ChangeElement, associatedWith: Int?)
+    - `offset` is offset of the inserted element in the final state
+      after the difference is fully applied.
+    - a non-nil associatedWith is the offset of the complementary change
+    - (??? I don't understsand)
+  - remove(offset: Int, element: ChangeElement, associatedWith: Int?)
+    - `offset` is the offset of the element to be removed in the original
+      state of the collection
+    - non-nil `associatedWith` is the offset of the complementary change.
+  - operator == / !=
+  - conform to En+Decodable/Equatable/Hashable
+* Properties
+  - isEmpty
+  - first/startIndex/endIndex/hashValue
+  - indices - indices valid for subscripting the collection
+  - lazy - sequence with same elements but with lazy map/filter implementation
+  - insertions: [CollectionDifference<ChangeElement>.Change]
+  - removals: ditto
+  - underestimatedCount: <= number of elements in the collection
+* Instance methods
+  - collection ones (taking (Change) -> something closures)
+  - allSatisfy / compactMap / contains / dropFirst/(while) / 
+  - enumerated / filter / flatMap / blah blah blah Collection stuff
+  - elementsEqual - use the given closure to equate this with another sequences
+  - distance(from:to)->Int - distance between two indices
+  - returns bool indicating whether every element of a sequence 
+    satisfies a given predicate.
+  - inferringMoves() -> CollectionDifference<ChangeElement>
+    - returns a new collection difference with associations between
+      individual elements that have been removed and inserted only once.
+  - conform to Collection/En+Decodable/Equatable/Hashable
+
+
+Exploring
+  - Make a change
+  - look at the insert/remove enum
+  - see what allSatisfy does
